@@ -8,33 +8,68 @@
 alias ls='ls --color=auto'
 PS1='[\u@\h \W]\$ '
 
+#########################
 
 #EDITOR
 export EDITOR=/usr/bin/nvim
 
-export CHEATCOLORS=true
+#cheat
+ccht (){
+	lang=$1
+	shift
+	str=$*
+	searchStr="${str// /+}"
+	curl cht.sh/$lang/$searchStr
+}
+cchtl (){
+	ccht $* | less -R
+}
 
-#mycustom aliases
+#aliases
 alias grep="grep --color"
+alias ls='ls --color=auto --group-directories-first'
+alias ll='ls -alF'
+alias l='ls -CF'
+alias la='ls -A'
+
 alias vim="nvim"
 alias pacremove="sudo pacman -Rs"
 alias pacremoveconfig="sudo pacman -Rsn"
-alias rangerh="ranger --cmd=\"set show_hidden=true\""
+alias rh="ranger --cmd=\"set show_hidden=true\""
+alias clipboard="copyq copy -" #pipe to clipboard
+
+alias ...='cd ../..'
+alias ..='cd ..'
+alias mkdir="mkdir -pv"
+
+
+#system stuff
+alias df="pydf" #needs pydf
+alias du="du -ach | sort -h"
+alias free="free -mt"
+alias ps="ps auxf"
+alias psg="ps aux | grep -v grep | grep -i -e VSZ -e" #excludes grep and includes header
 
 
 #mycustom functions
-cdl()
-{
-	cd $1
-	ls .
+clip (){ #needs copyq and copyq running
+	cat $* | copyq copy -
 }
-mkdirc(){
+
+cless (){
+	pygmentize -f terminal $1 | less -R
+}
+
+c() {
+	builtin cd "$@" && ls -A #maybe do -lA?
+}
+
+mcd(){
 	mkdir $1
 	cd $1
 }
 
-pacman() 
-{
+pacman() {
     case $1 in
         -S | -D | -S[^sih]* | -R* | -U*)
             /usr/bin/sudo /usr/bin/pacman "$@" ;;
